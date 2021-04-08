@@ -1,31 +1,24 @@
 const express = require("express");
 const router = express.Router();
 const { nanoid } = require("nanoid");
-
-const userInfo = [
-  {
-    id: nanoid(),
-    name: "test 1",
-    username: "test",
-  },
-  {
-    id: nanoid(),
-    name: "test 2",
-    username: "another test",
-  },
-];
+const UserInfo = require("../Models/user");
 
 //GET
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   //console.log(userInfo);
-
-  res.status(200).send(userInfo);
+  try {
+    const userInfo = await UserInfo.find();
+    res.status(200).json(userInfo);
+  } catch (err) {
+    res.status(500).json("Did not work");
+  }
 });
 
 //GET (w param) still needs work when not finding user
-router.get("/:id", (req, res) => {
+router.get("/:id", async (req, res) => {
+  const userInfo = await UserInfo.find();
   const specificUser = userInfo.find((user) => user.id === req.params.id);
-  console.log(specificUser, req.params.id);
+  //console.log(specificUser, req.params.id);
   if (specificUser === undefined) {
     //console.log(user.id, req.params.id);
 
@@ -38,21 +31,34 @@ router.get("/:id", (req, res) => {
 });
 
 // POST
-router.post("/", (req, res) => {
-  if (!req.body.name) {
-    return res.status(400).send("Something went wrong");
-  }
-  const newUser = {
-    id: nanoid(),
+router.post("/", async (req, res) => {
+  const newUserInfo = await new UserInfo({
     name: req.body.name,
     username: req.body.username,
-  };
-  userInfo.push(newUser);
-  res.status(201).json(userInfo);
+  });
+  try {
+    const newUser = await newUserInfo.save();
+    const userInfo = await UserInfo.find();
+    res.status(201).json(userInfo);
+  } catch (err) {
+    res.status(400).json("Not added correctly");
+
+    //if (!req.body.name) {
+    //  return res.status(400).send("Something went wrong");
+    //}
+    //const newUser = {
+    //  id: nanoid(),
+    //  name: req.body.name,
+    //  username: req.body.username,
+    //};
+    //userInfo.push(newUser);
+    //res.status(201).json(userInfo);
+  }
 });
 
 //PATCH
-router.patch("/:id", (req, res) => {
+router.patch("/:id", async (req, res) => {
+  const userInfo = await UserInfo.find();
   const patchUser = userInfo.find((user) => user.id === req.params.id);
   //console.log(user, user.id, req.params.id);
   if (patchUser === undefined) {
@@ -72,11 +78,14 @@ router.patch("/:id", (req, res) => {
 });
 
 //DELETE
-router.delete("/:id", (req, res) => {
+router.delete("/:id", async (req, res) => {
+  let userInfo = await UserInfo.find();
   const userIndex = userInfo.findIndex((user) => user.id === req.params.id);
   console.log(userIndex);
   if (userIndex !== -1) {
-    userInfo.splice(userIndex, 1);
+    //userInfo.splice(userIndex, 1);
+    userInfo[userIndex].remove();
+    userInfo = await UserInfo.find();
     res.status(200).json(userInfo);
   } else {
     res.status(400).json("User not found.");
