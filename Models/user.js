@@ -3,10 +3,16 @@ const moment = require("moment");
 
 const userSchema = new mongoose.Schema({
   name: {
-    type: String,
-    required: true,
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
+      type: String,
+      required: false,
+    },
   },
-  username: {
+  email: {
     type: String,
     required: true,
   },
@@ -14,6 +20,41 @@ const userSchema = new mongoose.Schema({
     type: Date,
     required: true,
     default: Date.now,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  address: {
+    street: {
+      type: String,
+      required: false,
+    },
+    street2: {
+      type: String,
+      required: false,
+    },
+    city: {
+      type: String,
+      required: false,
+    },
+    state: {
+      type: String,
+      required: false,
+    },
+    zipCode: {
+      type: Number,
+      required: false,
+    },
+  },
+  creditBalance: {
+    type: Number,
+    required: false,
+  },
+  orderHistory: {
+    type: Array,
+    required: false,
+    //default: [],
   },
 });
 

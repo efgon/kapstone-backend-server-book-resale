@@ -5,7 +5,6 @@ const UserInfo = require("../Models/user");
 
 //GET
 router.get("/", async (req, res) => {
-  //console.log(userInfo);
   try {
     const userInfo = await UserInfo.find();
     res.status(200).json(userInfo);
@@ -18,29 +17,30 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   const userInfo = await UserInfo.find();
   const specificUser = userInfo.find((user) => user.id === req.params.id);
-  //console.log(specificUser, req.params.id);
-  if (specificUser === undefined) {
-    //console.log(user.id, req.params.id);
 
+  if (specificUser === undefined) {
     return res.status(404).send("User Not Found");
   } else {
     return res.status(200).json(specificUser);
   }
-
-  //console.log("The last line of code is working");
 });
 
 // POST
 router.post("/", async (req, res) => {
   const newUserInfo = await new UserInfo({
-    name: req.body.name,
-    username: req.body.username,
+    name: {
+      firstName: req.body.name.firstName,
+      lastName: req.body.name.lastName,
+    },
+    email: req.body.email,
+    password: req.body.password,
   });
   try {
     const newUser = await newUserInfo.save();
     const userInfo = await UserInfo.find();
     res.status(201).json(userInfo);
   } catch (err) {
+    console.log(err);
     res.status(400).json("Not added correctly");
 
     //if (!req.body.name) {
@@ -59,20 +59,55 @@ router.post("/", async (req, res) => {
 //PATCH
 router.patch("/:id", async (req, res) => {
   const userInfo = await UserInfo.find();
-  const patchUser = userInfo.find((user) => user.id === req.params.id);
-  //console.log(user, user.id, req.params.id);
+  const patchUser = await userInfo.find((user) => user.id === req.params.id);
+
   if (patchUser === undefined) {
-    //console.log(user.id, req.params.id);
-
     return res.status(404).send("User Not Found");
-  } else if (req.body.name || req.body.username) {
-    if (req.body.name) {
-      patchUser.name = req.body.name;
+  } else if (
+    req.body.name.firstName ||
+    req.body.name.lastName ||
+    req.body.email ||
+    req.body.password ||
+    //req.body.creditBalance ||
+    //req.body.orderHistory ||
+    req.body.address.street ||
+    req.body.address.street2 ||
+    req.body.address.city ||
+    req.body.address.state ||
+    req.body.address.zipCode
+  ) {
+    try {
+      if (req.body.name.firstName) {
+        patchUser.name.firstName = req.body.name.firstName;
+      }
+      if (req.body.name.lastName) {
+        patchUser.name.lastName = req.body.name.lastName;
+      }
+      if (req.body.email) {
+        patchUser.email = req.body.email;
+      }
+      if (req.body.password) {
+        patchUser.password = req.body.password;
+      }
+      if (req.body.address.street) {
+        patchUser.address.street = req.body.address.street;
+      }
+      if (req.body.address.street2) {
+        patchUser.address.street2 = req.body.address.street2;
+      }
+      if (req.body.address.city) {
+        patchUser.address.city = req.body.address.city;
+      }
+      if (req.body.address.state) {
+        patchUser.address.state = req.body.address.state;
+      }
+      if (req.body.address.zipCode) {
+        patchUser.address.zipCode = req.body.address.zipCode;
+      }
+    } catch (err) {
+      console.log(err);
     }
-    if (req.body.username) {
-      patchUser.username = req.body.username;
-    }
-
+    await patchUser.save();
     return res.status(200).json(patchUser);
   }
 });
@@ -83,7 +118,6 @@ router.delete("/:id", async (req, res) => {
   const userIndex = userInfo.findIndex((user) => user.id === req.params.id);
   console.log(userIndex);
   if (userIndex !== -1) {
-    //userInfo.splice(userIndex, 1);
     userInfo[userIndex].remove();
     userInfo = await UserInfo.find();
     res.status(200).json(userInfo);

@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
 
 // it is set to save ~users~
 mongoose.connect(process.env.DATABASE_URL, {
@@ -18,5 +19,8 @@ app.use(express.json()); //middleware
 
 const usersRouter = require("./routes/users");
 app.use("/users", usersRouter);
+
+const booksRouter = require("./routes/books");
+app.use("/books", booksRouter);
 
 app.listen(3000, () => console.log("Server started"));
