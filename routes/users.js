@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { nanoid } = require("nanoid");
 const UserInfo = require("../Models/user");
+const autheticateToken = require("../server");
 
 //GET
 router.get("/", async (req, res) => {
@@ -57,7 +58,7 @@ router.post("/", async (req, res) => {
 });
 
 //PATCH
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", autheticateToken, async (req, res) => {
   const userInfo = await UserInfo.find();
   const patchUser = await userInfo.find((user) => user.id === req.params.id);
 
@@ -113,7 +114,7 @@ router.patch("/:id", async (req, res) => {
 });
 
 //DELETE
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", autheticateToken, async (req, res) => {
   let userInfo = await UserInfo.find();
   const userIndex = userInfo.findIndex((user) => user.id === req.params.id);
   console.log(userIndex);

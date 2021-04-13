@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { nanoid } = require("nanoid");
 const BookInfo = require("../Models/book");
+const autheticateToken = require("../server");
 
 //GET
 router.get("/", async (req, res) => {
@@ -38,7 +39,7 @@ router.get("/:id", async (req, res) => {
 //  });
 
 // POST
-router.post("/", async (req, res) => {
+router.post("/", autheticateToken, async (req, res) => {
   const newBookInfo = await new BookInfo({
     title: req.body.title,
     author: req.body.author,
@@ -66,7 +67,7 @@ router.post("/", async (req, res) => {
 });
 
 //PATCH NEEDS SOME WORK UPDATING AND KEEPING INFO UPDATED
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", autheticateToken, async (req, res) => {
   const bookInfo = await BookInfo.find();
   const patchBook = await bookInfo.find((book) => book.id === req.params.id);
 
@@ -104,7 +105,7 @@ router.patch("/:id", async (req, res) => {
 });
 
 //DELETE
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", autheticateToken, async (req, res) => {
   let bookInfo = await BookInfo.find();
   const bookIndex = bookInfo.findIndex((book) => book.id === req.params.id);
   console.log(bookIndex);
