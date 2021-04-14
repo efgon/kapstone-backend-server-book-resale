@@ -40,10 +40,11 @@ app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   const user = { name: email };
+  // const firstname = req.body.firstname
 
   const accessToken = generateAccessToken(user);
   const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
-  res.json({ accessToken: accessToken, refreshToken: refreshToken });
+  res.json({ accessToken: accessToken, refreshToken: refreshToken, email: email });
 });
 
 function generateAccessToken(user) {
