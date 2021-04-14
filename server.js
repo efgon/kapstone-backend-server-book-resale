@@ -16,14 +16,29 @@ db.on("error", (error) => console.error(error));
 db.once("open", () => console.log("Connected to Database"));
 
 app.use(express.json()); //middleware
+app.use((req, res, next) => {
+  res.header({ "Access-Control-Allow-Origin": "*"});
+  res.header({
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS, PUT, PATCH, DELETE",
+  });
+  res.header({
+    "Access-Control-Allow-Headers":
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+  });
+  if(req.method === "OPTIONS"){
+    res.sendStatus(200)
+  }
+  next();
+});
 
-//path is /users/login
 app.delete("/logout", (req, res) => {
   // accessToken
 });
 
+//path is /login
 app.post("/login", (req, res) => {
   const email = req.body.email;
+  const password = req.body.password;
   const user = { name: email };
 
   const accessToken = generateAccessToken(user);
@@ -52,4 +67,4 @@ app.use("/users", usersRouter);
 const booksRouter = require("./routes/books");
 app.use("/books", booksRouter);
 
-app.listen(3000, () => console.log("Server started"));
+app.listen(4000, () => console.log("Server started"));
