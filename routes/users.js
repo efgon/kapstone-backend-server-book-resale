@@ -29,12 +29,11 @@ router.get("/:id", async (req, res) => {
 // POST
 router.post("/", async (req, res) => {
   const newUserInfo = await new UserInfo({
-    name: {
-      firstName: req.body.name.firstName,
-      lastName: req.body.name.lastName,
-    },
-    email: req.body.email,
-    password: req.body.password,
+    
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      password: req.body.password,
   });
   try {
     const newUser = await newUserInfo.save();

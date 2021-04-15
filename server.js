@@ -37,10 +37,13 @@ app.delete("/logout", (req, res) => {
 
 //path is /login
 app.post("/login", (req, res) => {
+  // const userInfo = await UserInfo.find();
+  // const specificUser = userInfo.find((user) => user.email === req.body.email);
   const email = req.body.email;
   const password = req.body.password;
-  const user = { name: email };
+  const user = { email: email };
   // const firstname = req.body.firstname
+
 
   const accessToken = generateAccessToken(user);
   const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
