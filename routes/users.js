@@ -34,6 +34,7 @@ router.post("/", async (req, res) => {
       lastName: req.body.lastName,
       email: req.body.email,
       password: req.body.password,
+      creditBalance: 50.00, 
   });
   try {
     const newUser = await newUserInfo.save();

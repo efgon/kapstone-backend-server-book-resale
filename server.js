@@ -3,6 +3,8 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
+const UserInfo = require("./Models/user");
+
 
 // it is set to save ~users~
 mongoose.connect(process.env.DATABASE_URL, {
@@ -36,18 +38,20 @@ app.delete("/logout", (req, res) => {
 });
 
 //path is /login
-app.post("/login", (req, res) => {
-  // const userInfo = await UserInfo.find();
-  // const specificUser = userInfo.find((user) => user.email === req.body.email);
+app.post("/login", async (req, res) => {
+ 
   const email = req.body.email;
-  const password = req.body.password;
   const user = { email: email };
+  const userInfo = await UserInfo.find();
+  const specificUser = userInfo.find((user) => user.email === email);
   // const firstname = req.body.firstname
 
 
   const accessToken = generateAccessToken(user);
   const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET);
-  res.json({ accessToken: accessToken, refreshToken: refreshToken, email: email });
+
+  res.json({ accessToken: accessToken, refreshToken: refreshToken, user: specificUser });
+  console.log({user: specificUser})
 });
 
 function generateAccessToken(user) {

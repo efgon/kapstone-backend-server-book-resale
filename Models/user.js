@@ -54,6 +54,15 @@ const userSchema = new mongoose.Schema({
     required: false,
     //default: [],
   },
+  myBooks:{
+    type: Array,
+    required: false,
+    },
+  myCart:{
+    type: Array,
+    required: false,
+  }  
+  
 });
 
 module.exports = mongoose.model("user", userSchema);
