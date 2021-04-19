@@ -124,7 +124,7 @@ router.delete("/:email", autheticateToken, async (req, res) => {
   if (userIndex !== -1) {
     userInfo[userIndex].remove();
     userInfo = await UserInfo.find();
-    res.status(200).json(userInfo);
+    res.status(200).send("Account Deleted");
   } else {
     res.status(400).json("User not found.");
   }
