@@ -29,12 +29,11 @@ router.get("/:id", async (req, res) => {
 // POST
 router.post("/", async (req, res) => {
   const newUserInfo = await new UserInfo({
-    
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      password: req.body.password,
-      creditBalance: 50.00, 
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    email: req.body.email,
+    password: req.body.password,
+    creditBalance: 50.0,
   });
   try {
     const newUser = await newUserInfo.save();
@@ -58,15 +57,17 @@ router.post("/", async (req, res) => {
 });
 
 //PATCH
-router.patch("/:id", autheticateToken, async (req, res) => {
+router.patch("/:email", autheticateToken, async (req, res) => {
   const userInfo = await UserInfo.find();
-  const patchUser = await userInfo.find((user) => user.id === req.params.id);
+  const patchUser = await userInfo.find(
+    (user) => user.email === req.params.email
+  );
 
   if (patchUser === undefined) {
     return res.status(404).send("User Not Found");
   } else if (
-    req.body.name.firstName ||
-    req.body.name.lastName ||
+    req.body.firstName ||
+    req.body.lastName ||
     req.body.email ||
     req.body.password ||
     //req.body.creditBalance ||
@@ -78,11 +79,11 @@ router.patch("/:id", autheticateToken, async (req, res) => {
     req.body.address.zipCode
   ) {
     try {
-      if (req.body.name.firstName) {
-        patchUser.name.firstName = req.body.name.firstName;
+      if (req.body.firstName) {
+        patchUser.firstName = req.body.firstName;
       }
-      if (req.body.name.lastName) {
-        patchUser.name.lastName = req.body.name.lastName;
+      if (req.body.lastName) {
+        patchUser.lastName = req.body.lastName;
       }
       if (req.body.email) {
         patchUser.email = req.body.email;
@@ -114,9 +115,11 @@ router.patch("/:id", autheticateToken, async (req, res) => {
 });
 
 //DELETE
-router.delete("/:id", autheticateToken, async (req, res) => {
+router.delete("/:email", autheticateToken, async (req, res) => {
   let userInfo = await UserInfo.find();
-  const userIndex = userInfo.findIndex((user) => user.id === req.params.id);
+  const userIndex = userInfo.findIndex(
+    (user) => user.email === req.params.email
+  );
   console.log(userIndex);
   if (userIndex !== -1) {
     userInfo[userIndex].remove();
